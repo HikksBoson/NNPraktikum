@@ -46,9 +46,7 @@ class Perceptron(Classifier):
 
         # Initialize the weight vector with small random values
         # around 0 and0.1
-        self.weight_dim = self.trainingSet.input.shape[1] + 1
-        self.weight = np.random.rand(self.weight_dim)/100 # plus one for w_0
-
+        self.weight = np.random.rand(self.trainingSet.input.shape[1])/100
 
     def train(self, verbose=True):
         """Train the perceptron with the perceptron learning algorithm.
@@ -60,23 +58,7 @@ class Perceptron(Classifier):
         """
         
         # Write your code to train the perceptron here
-        for i in range(0, self.epochs):
-            print "Training perceptrion in iteration " + str(i) + "\n"
-
-            error = np.zeros(self.weight_dim)
-
-            # train perceptron with self.trainingSet
-            for index, elem in enumerate(self.trainingSet):
-
-                cur_class = self.classify(elem)
-                if  cur_class != self.trainingSet.label[index]:
-                    # not correctly classified
-                    tmp_list = [1]
-                    tmp_list.extend(elem)
-                    error = error + np.absolute(tmp_list) # TODO add the one earlier
-
-            self.updateWeights(error)
-
+        pass
 
     def classify(self, testInstance):
         """Classify a single instance.
@@ -91,8 +73,7 @@ class Perceptron(Classifier):
             True if the testInstance is recognized as a 7, False otherwise.
         """
         # Write your code to do the classification on an input image
-        return self.fire(testInstance)
-
+        pass
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
@@ -113,12 +94,10 @@ class Perceptron(Classifier):
         # set.
         return list(map(self.classify, test))
 
-    def updateWeights(self, error):
+    def updateWeights(self, input, error):
         # Write your code to update the weights of the perceptron here
-        self.weight = self.weight - self.learningRate * error # TODO why should we use a minus here???
+        pass
          
     def fire(self, input):
         """Fire the output of the perceptron corresponding to the input """
-        tmp_list = [1]
-        tmp_list.extend(input) # TODO add the one earlier
-        return Activation.sign(np.dot(np.array(tmp_list), self.weight)) # add a "1" for x_0
+        return Activation.sign(np.dot(np.array(input), self.weight))
