@@ -7,18 +7,33 @@ from model.perceptron import Perceptron
 from model.logistic_regression import LogisticRegression
 from report.evaluator import Evaluator
 
+from util.loss_functions import MeanSquaredError
+from util.loss_functions import BinaryCrossEntropyError
+from util.loss_functions import CrossEntropyError
+
+
 
 def main():
+
+
     data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
     myStupidClassifier = StupidRecognizer(data.trainingSet,
                                           data.validationSet,
                                           data.testSet)
-    myPerceptronClassifier = Perceptron(data.trainingSet,
+    '''myPerceptronClassifier = Perceptron(data.trainingSet,
                                         data.validationSet,
                                         data.testSet,
                                         learningRate=0.005,
-                                        epochs=30)
-
+                                        epochs=30)'''
+                                        
+    myLogisticClassifier = LogisticRegression(data.trainingSet,
+                                        data.validationSet,
+                                        data.testSet,
+                                        learningRate=0.005,
+                                        epochs=50)
+                                        
+    
+	
     # Train the classifiers
     print("=========================")
     print("Training..")
@@ -28,14 +43,14 @@ def main():
     print("Done..")
 
     print("\nPerceptron has been training..")
-    myPerceptronClassifier.train()
+    myLogisticClassifier.train()
     print("Done..")
 
     
     # Do the recognizer
     # Explicitly specify the test set to be evaluated
     stupidPred = myStupidClassifier.evaluate()
-    perceptronPred = myPerceptronClassifier.evaluate()
+    logisticPred = myLogisticClassifier.evaluate()
 
     # Report the result
     print("=========================")
@@ -47,8 +62,11 @@ def main():
 
     print("\nResult of the Perceptron recognizer:")
     # evaluator.printComparison(data.testSet, perceptronPred)
-    evaluator.printAccuracy(data.testSet, perceptronPred)
-    
+    #print(logisticPred)
+    #print(len(logisticPred))
+    #print(len(stupidPred))
+    #print(stupidPred)
+    evaluator.printAccuracy(data.testSet, logisticPred)
     
 if __name__ == '__main__':
     main()

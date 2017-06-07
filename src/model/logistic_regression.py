@@ -5,6 +5,8 @@ import logging
 
 import numpy as np
 
+import util.loss_functions
+
 from util.activation_functions import Activation
 from model.classifier import Classifier
 
@@ -46,6 +48,9 @@ class LogisticRegression(Classifier):
 
         # Initialize the weight vector with small values
         self.weight = 0.01*np.random.randn(self.trainingSet.input.shape[1])
+        
+        self.weight_dim = self.trainingSet.input.shape[1] + 1
+        self.weight = np.random.rand(self.weight_dim)/100
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -55,8 +60,27 @@ class LogisticRegression(Classifier):
         verbose : boolean
             Print logging messages with validation accuracy if verbose is True.
         """
-
-        pass
+        #diff_err = DifferentError()
+        
+        for i in range(0, self.epochs):
+            if verbose:
+                print ("Training perceptron in iteration " + str(i) + "\n")
+            
+            error = np.zeros(self.weight_dim)
+            
+            #train perceptron
+            for index, elem in enumerate(self.trainingSet):
+                temp = [1]
+                temp.extend(elem)
+            
+                output = self.classify(elem)
+                de_dy = output - self.trainingSet.label[index]
+                de_dx = de_dy * output * (1 - output)
+                de_dw = de_dx * np.array(temp)
+                error += de_dw
+                
+            error /= len(self.trainingSet.input)
+            self.updateWeights(error)
         
     def classify(self, testInstance):
         """Classify a single instance.
@@ -70,7 +94,7 @@ class LogisticRegression(Classifier):
         bool :
             True if the testInstance is recognized as a 7, False otherwise.
         """
-        pass
+        return self.fire(testInstance)
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
@@ -85,16 +109,21 @@ class LogisticRegression(Classifier):
         List:
             List of classified decisions for the dataset's entries.
         """
+        
         if test is None:
             test = self.testSet.input
         # Once you can classify an instance, just use map for all of the test
         # set.
-        return list(map(self.classify, test))
+        classified = (map(self.classify, test))
+        sign = lambda x: x > 0.5
+        return list(map(sign, classified))
 
     def updateWeights(self, grad):
-        pass
+        self.weight -= grad * self.learningRate
 
     def fire(self, input):
         # Look at how we change the activation function here!!!!
         # Not Activation.sign as in the perceptron, but sigmoid
-        return Activation.sigmoid(np.dot(np.array(input), self.weight))
+        temp = [1]
+        temp.extend(input)
+        return Activation.sigmoid(np.dot(np.array(temp), self.weight))
