@@ -10,8 +10,9 @@ from report.evaluator import Evaluator
 from util.loss_functions import MeanSquaredError
 from util.loss_functions import BinaryCrossEntropyError
 from util.loss_functions import CrossEntropyError
-
-
+import matplotlib.pyplot as plt
+from matplotlib import style
+style.use('ggplot')
 
 def main():
 
@@ -45,8 +46,16 @@ def main():
     print("\nPerceptron has been training..")
     myLogisticClassifier.train()
     print("Done..")
-
     
+    #Plot the error function
+    fig=plt.figure()
+    ax0=fig.add_subplot(111)
+    ax0.plot(range(myLogisticClassifier.epochs),myLogisticClassifier.error_history)
+    ax0.set_xlabel('Epochs')
+    ax0.set_ylabel('Average of Error')
+    ax0.set_title('Error function of Logistic Regression, learning Rate: '+str(myLogisticClassifier.learningRate))
+    plt.show()
+
     # Do the recognizer
     # Explicitly specify the test set to be evaluated
     stupidPred = myStupidClassifier.evaluate()

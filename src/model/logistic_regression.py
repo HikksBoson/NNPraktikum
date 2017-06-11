@@ -51,6 +51,7 @@ class LogisticRegression(Classifier):
         
         self.weight_dim = self.trainingSet.input.shape[1] + 1
         self.weight = np.random.rand(self.weight_dim)/100
+        self.error_history=[]
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -61,7 +62,7 @@ class LogisticRegression(Classifier):
             Print logging messages with validation accuracy if verbose is True.
         """
         #diff_err = DifferentError()
-        
+        error_history=[]
         for i in range(0, self.epochs):
             if verbose:
                 print ("Training perceptron in iteration " + str(i) + "\n")
@@ -78,9 +79,11 @@ class LogisticRegression(Classifier):
                 de_dx = de_dy * output * (1 - output)
                 de_dw = de_dx * np.array(temp)
                 error += de_dw
-                
+   
             error /= len(self.trainingSet.input)
+            self.error_history.append(np.average(error,axis=0)) 
             self.updateWeights(error)
+            
         
     def classify(self, testInstance):
         """Classify a single instance.
